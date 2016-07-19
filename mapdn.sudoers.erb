@@ -1,0 +1,9 @@
+# user-facing mapdn/gridmap scripts
+ALL         ALL=(ALL) NOPASSWD:  <%= @install_dir %>/bin/add-my-dn.real, \
+                                 <%= @install_dir %>/bin/delete-my-dn.real, \
+                                 <%= @install_dir %>/bin/list-my-dns.real
+# administrative mapdn/gridmap scripts
+%<%= @priv_group %>   ALL=(ALL) NOPASSWD:  <%= @install_dir %>/bin/add-user-dn.real, \
+                                 <%= @install_dir %>/bin/delete-user-dn.real, \
+                                 <%= @install_dir %>/bin/list-user-dns.real
+
