@@ -1,0 +1,4 @@
+CREATE TABLE dnusermap(
+  dn   VARCHAR(255) PRIMARY KEY,
+  user VARCHAR(24));
+
