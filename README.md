@@ -2,7 +2,7 @@
 
 ## Introduction
 
-** NOTE:  Work in progress! **
+**NOTE:  Work in progress!**
 
 This is a simple MySQL-backed system for managing the mappings between 
 X.509 Distinguished Names (DNs) and local users in Globus style
