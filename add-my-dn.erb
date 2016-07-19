@@ -1,0 +1,55 @@
+#!/bin/bash
+# <%= @servername %>:<%= @__file__ %>
+# add-my-dn:  self-service wrapper around mapdn.py using sudo 
+
+runas="<%= @run_as %>"
+
+usage() {
+  echo "Usage:"
+  echo "  add-my-dn --dn \"/DC=foo/DC=bar/CN=foo bar\""
+  echo "  add-my-dn --cert certfile"
+  exit 0
+}
+
+# command line argument processing
+ARGS=`getopt -o '' -l dn:,cert: -- "$@"`
+if [ $? -ne 0 ]
+then
+    usage
+fi
+eval set -- "$ARGS"
+dn=""
+certfile=""
+while true; do
+  case "$1" in
+    --dn)  dn="$2" ; shift 2 ;;
+    --cert) certfile="$2" ; shift 2 ;;
+    *) break
+  esac
+done
+if [ -z "$dn" -a -z "$certfile" ]; then
+  usage
+fi
+
+# determine DN from certfile, if necessary
+if [ -z "$dn" -a -n "$certfile" ]; then
+  if [ ! -r $certfile ]; then
+    echo "$0:  Cannot read $certfile"
+    exit -4
+  else
+    dn=$(openssl x509 -in $certfile -inform PEM -subject -noout 2>/dev/null | sed 's/^subject= //')
+  fi
+fi
+
+# add to map
+if [ -n "$runas" -a -n "$dn" ]; then
+  sudo -u $runas <%= @install_dir %>/bin/add-my-dn.real --dn "$dn"
+  exit $?
+elif [ -z "$dn" ]; then
+  echo "$0:  Could not determine DN, exiting"
+  exit -2
+else
+  echo "$0:  Unknown error, exiting"
+  exit -32
+fi
+

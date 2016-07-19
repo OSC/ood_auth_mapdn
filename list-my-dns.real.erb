@@ -1,0 +1,17 @@
+#!/bin/bash
+# <%= @servername %>:<%= @__file__ %>
+# list-my-dns:  self-service wrapper around mapdn.py using sudo 
+
+username="$SUDO_USER"
+
+# list DNs
+if [ -n "$username" ]; then
+  <%= @install_dir %>/sbin/mapdn.py --export --user "$username"
+  exit $?
+elif [ -z "$username"]; then
+  echo "$0:  Could not determine username, exiting"
+  exit -1
+else
+  echo "$0:  Unknown error, exiting"
+  exit -32
+fi

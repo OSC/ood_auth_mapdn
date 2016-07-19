@@ -1,0 +1,14 @@
+#!/bin/bash
+# <%= @servername %>:<%= @__file__ %>
+# list-my-dns:  self-service wrapper around mapdn.py using sudo 
+
+runas="<%= @run_as %>"
+
+# list DNs
+if [ -n "$runas" ]; then
+  sudo -u $runas <%= @install_dir %>/bin/list-my-dns.real
+  exit $?
+else
+  echo "$0:  Unknown error, exiting"
+  exit -32
+fi

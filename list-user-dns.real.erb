@@ -1,0 +1,53 @@
+#!/bin/bash
+# <%= @servername %>:<%= @__file__ %>
+# list-user-dns:  support wrapper around mapdn.py using sudo 
+
+usage() {
+  echo "Usage:"
+  echo "  list-user-dns --user someuser"
+  exit 0
+}
+
+# command line argument processing
+ARGS=`getopt -o '' -l user: -- "$@"`
+if [ $? -ne 0 ]
+then
+    usage
+fi
+eval set -- "$ARGS"
+username=""
+while true; do
+  case "$1" in
+    --user) username="$2" ; shift 2 ;;
+    *) break
+  esac
+done
+if [ -z "$username" ]; then
+  usage
+fi
+
+# sanity check
+if [ -n "$username" ]; then
+  uid=$(id -u "$username" 2>/dev/null)
+  if [ -n "$uid" ]; then
+    if [ $uid -le 1000 ]; then
+      echo "Cannot manipulate DNs for system accounts, exiting"
+      exit -16
+    fi
+  elif [ -z "$uid" ]; then
+    echo "Could not determine uid of $username, exiting"
+    exit -8
+  fi
+fi
+
+# list DNs
+if [ -n "$username" ]; then
+  <%= @install_dir %>/sbin/mapdn.py --export --user "$username"
+  exit $?
+elif [ -z "$username"]; then
+  echo "$0:  Could not determine username, exiting"
+  exit -1
+else
+  echo "$0:  Unknown error, exiting"
+  exit -32
+fi
